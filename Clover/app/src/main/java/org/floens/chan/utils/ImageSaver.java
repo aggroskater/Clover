@@ -112,6 +112,14 @@ public class ImageSaver {
                         return;
                     }
 
+                    // need to incorporate the write album to external workaround
+                    // here. Perhaps detect forward slashes in the "name" variable
+                    // and then realize that, aha, this is going to be saved
+                    // elsewhere? If I'm understanding this correctly, merely
+                    // downloading a single image won't have any forward slashes
+                    // in the "name" variable.
+                    Logger.d( TAG , "single image name variable is: " + name);
+
                     String fileName = filterName(name + "." + extension);
                     File destination = findUnused(new File(saveDir, fileName), false);
 
@@ -193,10 +201,15 @@ public class ImageSaver {
                         }
                         try {
                             ids.add(dm.enqueue(request));
+                        // addresses issue #15 - download albums to external storage fails.
                         } catch (SecurityException e) {
                             Logger.w( TAG , "Probably trying to write to external storage. Working around...");
                             Logger.w( TAG , "Actual error: " + e.getMessage());
-                            Logger.d( TAG , "Attempting to download: " + pair.uri);
+                            Logger.d( TAG , "Attempting to download url: " + pair.uri);
+                            Logger.d( TAG , "to: " + pair.file);
+                            Logger.d( TAG , "Attempting to run saveImage");
+                            saveImage(context, pair.uri, pair.file, "png", false);
+                            Logger.d( TAG , "SaveImage ran.");
                             // we could use the current code for downloading a
                             // single image, but that would need to be modified
                             // to pass the new directory.

@@ -144,7 +144,7 @@ public class ImageSaver {
         });
     }
 
-    private void listDownload(Context context, File subFolder, final List<DownloadPair> list) {
+    private void listDownload(final Context context, File subFolder, final List<DownloadPair> list) {
         final DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 
         if (!subFolder.isDirectory() && !subFolder.mkdirs()) {

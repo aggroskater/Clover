@@ -168,22 +168,39 @@ public class ImageSaver {
                         break;
                     }
 
-                    DownloadManager.Request request;
+                    // compiler throws error if request isn't initialized.
+                    // (the initialization in the try block could fail)
+                    DownloadManager.Request request = null;
                     try {
+                        Logger.d( TAG , "Prior to downloadmanager request.");
                         request = new DownloadManager.Request(pair.uri);
+                        Logger.d( TAG , "After downloadmanager request.");
                     } catch (IllegalArgumentException e) {
                         continue;
                     }
 
+                    Logger.d( TAG , "Before setDest.");
                     request.setDestinationUri(Uri.fromFile(pair.file));
+                    Logger.d( TAG , "After setDest, before setVisible");
                     request.setVisibleInDownloadsUi(false);
+                    Logger.d( TAG , "After setVisible, before allowScanning");
                     request.allowScanningByMediaScanner();
+                    Logger.d( TAG , "After allowScanning");
 
                     synchronized (stopped) {
                         if (stopped.get()) {
                             break;
                         }
-                        ids.add(dm.enqueue(request));
+                        try {
+                            ids.add(dm.enqueue(request));
+                        } catch (SecurityException e) {
+                            Logger.w( TAG , "Probably trying to write to external storage. Working around...");
+                            Logger.w( TAG , "Actual error: " + e.getMessage());
+                            Logger.d( TAG , "Attempting to download: " + pair.uri);
+                            // we could use the current code for downloading a
+                            // single image, but that would need to be modified
+                            // to pass the new directory.
+                        }
                     }
                 }
             }

@@ -208,7 +208,7 @@ public class ImageSaver {
                             Logger.d( TAG , "Attempting to download url: " + pair.uri);
                             Logger.d( TAG , "to: " + pair.file);
                             Logger.d( TAG , "Attempting to run saveImage");
-                            saveImage(context, pair.uri, pair.file, "png", false);
+                            saveImage(context, pair.uri.toString(), pair.file.toString(), "png", false);
                             Logger.d( TAG , "SaveImage ran.");
                             // we could use the current code for downloading a
                             // single image, but that would need to be modified
